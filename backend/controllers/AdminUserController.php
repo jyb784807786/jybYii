@@ -2,8 +2,9 @@
 
 namespace backend\controllers;
 
+use backend\models\AdminUserForm;
 use Yii;
-use app\models\AdminUser;
+use common\models\AdminUser;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -63,15 +64,15 @@ class AdminUserController extends Controller
      */
     public function actionCreate()
     {
-        $model = new AdminUser();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        $model = new AdminUserForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->createAdminUser()) {
+                return $this->redirect(['view', 'id' => $user->id]);
+            }
         }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**

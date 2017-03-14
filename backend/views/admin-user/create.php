@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model app\models\AdminUser */
+/* @var $model common\models\AdminUser */
 
 $this->title = 'Create Admin User';
 $this->params['breadcrumbs'][] = ['label' => 'Admin Users', 'url' => ['index']];
