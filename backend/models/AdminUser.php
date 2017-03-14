@@ -60,4 +60,18 @@ class AdminUser extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
         ];
     }
+
+    public function createAdminUser()
+    {
+        if (!$this->validate()) {
+            return null;
+        }
+
+        $this->username = $this->username;
+        $user->email = $this->email;
+        $user->setPassword($this->password);
+        $user->generateAuthKey();
+
+        return $user->save() ? $user : null;
+    }
 }
