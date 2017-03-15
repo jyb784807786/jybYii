@@ -2,12 +2,12 @@
 namespace backend\models;
 
 use yii\base\Model;
-use common\models\AdminUser;
+use common\models\User;
 
 /**
  * Signup form
  */
-class AdminUserForm extends Model
+class UserForm extends Model
 {
     public $username;
     public $email;
@@ -22,14 +22,14 @@ class AdminUserForm extends Model
         return [
             ['username', 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\AdminUser', 'message' => 'This username has already been taken.'],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\common\models\AdminUser', 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
@@ -37,15 +37,15 @@ class AdminUserForm extends Model
     }
 
     /**
-     * @return AdminUser|null
+     * @return User|null
      */
-    public function createAdminUser()
+    public function createUser()
     {
         if (!$this->validate()) {
             return null;
         }
 
-        $user = new AdminUser();
+        $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->setPassword($this->password);

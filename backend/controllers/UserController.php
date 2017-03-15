@@ -2,18 +2,18 @@
 
 namespace backend\controllers;
 
-use backend\models\AdminUserForm;
+use backend\models\UserForm;
 use Yii;
-use common\models\AdminUser;
+use common\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * AdminUserController implements the CRUD actions for AdminUser model.
+ * UserController implements the CRUD actions for User model.
  */
-class AdminUserController extends Controller
+class UserController extends AdminBaseController
 {
     /**
      * @inheritdoc
@@ -31,13 +31,13 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Lists all AdminUser models.
+     * Lists all User models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => AdminUser::find(),
+            'query' => User::find(),
         ]);
 
         return $this->render('index', [
@@ -46,7 +46,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Displays a single AdminUser model.
+     * Displays a single User model.
      * @param integer $id
      * @return mixed
      */
@@ -58,25 +58,26 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Creates a new AdminUser model.
+     * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new AdminUserForm();
+        $model = new UserForm();
+
         if ($model->load(Yii::$app->request->post())) {
-            if ($user = $model->createAdminUser()) {
+            if($user = $model->createUser())
                 return $this->redirect(['view', 'id' => $user->id]);
-            }
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
-     * Updates an existing AdminUser model.
+     * Updates an existing User model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -95,7 +96,7 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Deletes an existing AdminUser model.
+     * Deletes an existing User model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -108,15 +109,15 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Finds the AdminUser model based on its primary key value.
+     * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return AdminUser the loaded model
+     * @return User the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = AdminUser::findOne($id)) !== null) {
+        if (($model = User::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
