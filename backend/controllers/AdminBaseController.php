@@ -42,5 +42,8 @@ class AdminBaseController extends Controller{
         ];
     }
 
-
+    public function getAdminId()
+    {
+        return $_SESSION[''];
+    }
 }
