@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "article".
@@ -10,11 +12,11 @@ use Yii;
  * @property integer $id
  * @property string $title
  * @property string $content
- * @property integer $created
- * @property integer $updated
+ * @property integer $created_at
+ * @property integer $updated_at
  * @property integer $status
  */
-class Article extends \yii\db\ActiveRecord
+class Article extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -30,10 +32,26 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'created', 'updated'], 'required'],
+            [['title'], 'required'],
             [['content'], 'string'],
-            [['created', 'updated', 'status'], 'integer'],
+            [['status'], 'integer'],
             [['title'], 'string', 'max' => 50],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::className(),
+                'createdAtAttribute' => 'created_at',// created_at可根据数据库字段修改
+                'updatedAtAttribute' => 'updated_at', // updated_at可根据根据数据库字段修改
+                // if you're using datetime instead of UNIX timestamp:
+                // 'value' => new Expression('NOW()'),
+            ]
         ];
     }
 
@@ -46,8 +64,8 @@ class Article extends \yii\db\ActiveRecord
             'id' => 'ID',
             'title' => 'Title',
             'content' => 'Content',
-            'created' => 'Created',
-            'updated' => 'Updated',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
             'status' => 'Status',
         ];
     }
