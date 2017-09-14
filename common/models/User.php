@@ -186,4 +186,11 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
+
+    public function afterFind()
+    {
+        $this->created_at = date('Y-m-d H:i:s', $this->created_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
+        $this->updated_at = date('Y-m-d H:i:s', $this->updated_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
+        return parent::afterFind();
+    }
 }

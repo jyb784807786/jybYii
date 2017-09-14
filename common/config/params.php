@@ -3,4 +3,10 @@ return [
     'adminEmail' => 'admin@example.com',
     'supportEmail' => 'support@example.com',
     'user.passwordResetTokenExpire' => 3600,
+
+    /* 上传文件 */
+    'upload' => [
+        'url'  => '/frontend/web/img',
+        'path' => '/frontend/web/img',
+    ],
 ];

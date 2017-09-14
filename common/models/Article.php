@@ -11,6 +11,8 @@ use yii\db\ActiveRecord;
  *
  * @property integer $id
  * @property string $title
+ * @property string $imgUrl
+ * @property string $brief
  * @property string $content
  * @property integer $created_at
  * @property integer $updated_at
@@ -18,6 +20,10 @@ use yii\db\ActiveRecord;
  */
 class Article extends ActiveRecord
 {
+    const STATUS_DELETE = 0;//删除
+    const STATUS_ACTIVE = 10;//显示
+    const STATUS_HIDDEN = 20;//隐藏
+
     /**
      * @inheritdoc
      */
@@ -36,6 +42,8 @@ class Article extends ActiveRecord
             [['content'], 'string'],
             [['status'], 'integer'],
             [['title'], 'string', 'max' => 50],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETE,self::STATUS_HIDDEN]],
         ];
     }
 
@@ -45,13 +53,7 @@ class Article extends ActiveRecord
     public function behaviors()
     {
         return [
-            [
-                'class' => TimestampBehavior::className(),
-                'createdAtAttribute' => 'created_at',// created_at可根据数据库字段修改
-                'updatedAtAttribute' => 'updated_at', // updated_at可根据根据数据库字段修改
-                // if you're using datetime instead of UNIX timestamp:
-                // 'value' => new Expression('NOW()'),
-            ]
+            TimestampBehavior::className(),
         ];
     }
 
@@ -62,11 +64,20 @@ class Article extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'content' => 'Content',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'status' => 'Status',
+            'title' => '标题',
+            'imgUrl' => '缩略图',
+            'content' => '正文',
+            'brief' => '简介',
+            'created_at' => '创建时间',
+            'updated_at' => '更新时间',
+            'status' => '状态',
         ];
+    }
+
+    public function afterFind()
+    {
+        $this->created_at = date('Y-m-d H:i:s', $this->created_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
+        $this->updated_at = date('Y-m-d H:i:s', $this->updated_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
+        return parent::afterFind();
     }
 }
