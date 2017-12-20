@@ -58,6 +58,9 @@ return [
             'class' => 'yii\rbac\DbManager',
             'defaultRoles' => ['guest'],
         ],
+        'imgUpload' => [
+            'class' => 'common\widgets\Upload'
+        ]
     ],
     'params' => $params,
     'as access' => [

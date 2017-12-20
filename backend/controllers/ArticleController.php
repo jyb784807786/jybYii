@@ -12,6 +12,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use common\widgets\Upload;
 
 /**
  * ArticleController implements the CRUD actions for Article model.
@@ -69,9 +70,34 @@ class ArticleController extends Controller
     {
         $model = new Article();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post())) {
+
+            $files = UploadedFile::getInstance($model,'imgUrl');
+            if(!empty($files)) {
+                $upload = Yii::$app->imgUpload->UploadPhoto($files, '/upload/article/');
+                if (is_array($upload) && $upload['status']==false){
+                    Yii::$app->session->setFlash('error', $upload['data']);
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);
+                } else
+                    $model->imgUrl = $upload;
+            }
+
+            if ($model->save()) {
+
+                Yii::$app->session->setFlash('success', '添加成功');
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+
+                Yii::$app->session->setFlash('error', '添加失败');
+
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+        }else{
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -88,13 +114,32 @@ class ArticleController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post())) {
+
+            $files = UploadedFile::getInstance($model,'imgUrl');
+            if(!empty($files)) {
+                $upload = Yii::$app->imgUpload->UploadPhoto($files, '/upload/article/');
+                if (is_array($upload) && $upload['status']==false){
+                    Yii::$app->session->setFlash('error', $upload['data']);
+                    return $this->render('update', [
+                        'model' => $model,
+                    ]);
+                } else
+                    $model->imgUrl = $upload;
+            }
+
+            if($model->save()){
+                Yii::$app->session->setFlash('success', '更新成功');
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+        }else
             return $this->render('update', [
                 'model' => $model,
             ]);
-        }
     }
 
     /**
@@ -106,6 +151,8 @@ class ArticleController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
+
+        Yii::$app->session->setFlash('success', '删除成功');
 
         return $this->redirect(['index']);
     }
@@ -124,47 +171,5 @@ class ArticleController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    // action examples
-
-    public function actionUpload()
-    {
-        $imageFile = UploadedFile::getInstanceByName('imgUpload');
-
-        $directory = Yii::getAlias('@frontend/web/img/temp') . DIRECTORY_SEPARATOR . Yii::$app->session->id . DIRECTORY_SEPARATOR;
-        if (!is_dir($directory)) {
-            FileHelper::createDirectory($directory);
-        }
-
-        //file_put_contents(BASE_UPLOAD_PATH.DS.$this->save_path.DS.$this->file_name,base64_decode($field));
-
-        if ($imageFile) {
-            $uid = uniqid(time(), true);
-            $fileName = $uid . '.' . $imageFile->extension;
-            $filePath = $directory . $fileName;
-            if ($imageFile->saveAs($filePath)) {
-                $path = '/img/temp/' . Yii::$app->session->id . DIRECTORY_SEPARATOR . $fileName;
-                return Json::encode([
-                    'status'=>true,
-                    'files' => [
-                            'name' => $fileName,
-                            'size' => $imageFile->size,
-                            'url' => $path,
-                            'thumbnailUrl' => $path,
-                            'deleteUrl' => 'image-delete?name=' . $fileName,
-                            'deleteType' => 'POST',
-                    ],
-                ]);
-            }
-        }
-
-        return Json::encode(['status'=>false]);
-    }
-
-    public function actionUploadBase64()
-    {
-        $up = new Uploader('imgbase64',[],'base64');
-
     }
 }

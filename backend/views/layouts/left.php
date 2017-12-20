@@ -52,10 +52,11 @@
         echo dmstr\widgets\Menu::widget(
             [
                 'encodeLabels' => false,
-                'options' => ['class' => 'sidebar-menu'],
+                'options' => ['class' => 'sidebar-menu tree', 'data-widget'=> 'tree'],
                 'items' => mdm\admin\components\MenuHelper::getAssignedMenu(Yii::$app->user->id,null,$callback),
             ]
         ); ?>
+
     </section>
 
 </aside>
