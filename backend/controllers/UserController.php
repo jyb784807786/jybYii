@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\UserForm;
+use common\models\AdminUser;
 use Yii;
 use common\models\User;
 use yii\data\ActiveDataProvider;
@@ -37,7 +38,7 @@ class UserController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => User::find(),
+            'query' => AdminUser::find(),
         ]);
 
         return $this->render('index', [
@@ -112,12 +113,12 @@ class UserController extends Controller
      * Finds the User model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return User the loaded model
+     * @return AdminUser the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = User::findOne($id)) !== null) {
+        if (($model = AdminUser::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

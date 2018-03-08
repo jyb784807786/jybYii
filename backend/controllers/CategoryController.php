@@ -5,6 +5,7 @@ namespace backend\controllers;
 use Yii;
 use common\models\Category;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -23,7 +24,7 @@ class CategoryController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['POST']
                 ],
             ],
         ];
@@ -66,10 +67,19 @@ class CategoryController extends Controller
         $model = new Category();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+
+            return $this->redirect(['category/index']);
+
         } else {
+            //
+            $category = $model->getCateSelect();
+
+            $category = ArrayHelper::map($category,'id','name');
+            $model->isShow = 1;
+
             return $this->render('create', [
                 'model' => $model,
+                'category' => ['作为父级']+$category,
             ]);
         }
     }
@@ -87,8 +97,13 @@ class CategoryController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            $category = $model->getCateSelect();
+
+            $category = ArrayHelper::map($category,'id','name');
+
             return $this->render('update', [
                 'model' => $model,
+                'category' => ['作为父级']+$category,
             ]);
         }
     }

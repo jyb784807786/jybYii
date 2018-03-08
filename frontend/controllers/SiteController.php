@@ -19,24 +19,27 @@ use frontend\models\ContactForm;
 class SiteController extends Controller
 {
     /**
+     * 授权/过滤器
      * @inheritdoc
      */
     public function behaviors()
     {
         return [
             'access' => [
+                //核心控制器 提供基于 rules 规则的访问控制
                 'class' => AccessControl::className(),
+                //指定 过滤器应用到哪些控制器 也可使用except 指定哪些不应用。
                 'only' => ['logout', 'signup'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
                         'allow' => true,
-                        'roles' => ['?'],
+                        'roles' => ['?'],//访客用户
                     ],
                     [
                         'actions' => ['logout'],
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['@'],//认证用户
                     ],
                 ],
             ],

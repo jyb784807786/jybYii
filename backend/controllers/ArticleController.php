@@ -5,6 +5,8 @@ namespace backend\controllers;
 use common\widgets\images\Uploader;
 use Yii;
 use common\models\Article;
+use yii\helpers\ArrayHelper;
+use common\models\Category;
 use yii\data\ActiveDataProvider;
 use yii\helpers\FileHelper;
 use yii\helpers\Json;
@@ -13,6 +15,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 use common\widgets\Upload;
+use yii\data\Pagination;
 
 /**
  * ArticleController implements the CRUD actions for Article model.
@@ -40,8 +43,10 @@ class ArticleController extends Controller
      */
     public function actionIndex()
     {
+        $query = Article::find()->leftJoin('category','`article`.cateId = `category`.id');
+
         $dataProvider = new ActiveDataProvider([
-            'query' => Article::find(),
+            'query' => $query,
         ]);
 
         return $this->render('index', [
@@ -69,6 +74,7 @@ class ArticleController extends Controller
     public function actionCreate()
     {
         $model = new Article();
+        $CateModel = new Category();
 
         if ($model->load(Yii::$app->request->post())) {
 
@@ -98,7 +104,13 @@ class ArticleController extends Controller
                 ]);
             }
         }else{
+
+            $category = $CateModel->getCateSelect();
+
+            $category = ArrayHelper::map($category,'id','name');
+
             return $this->render('create', [
+                'category' => $category,
                 'model' => $model,
             ]);
         }
@@ -113,6 +125,7 @@ class ArticleController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $CateModel = new Category();
 
         if ($model->load(Yii::$app->request->post())) {
 
@@ -136,10 +149,16 @@ class ArticleController extends Controller
                 return $this->render('update', [
                     'model' => $model,
                 ]);
-        }else
+        }else {
+            $category = $CateModel->getCateSelect();
+
+            $category = ArrayHelper::map($category,'id','name');
+
             return $this->render('update', [
+                'category' => $category,
                 'model' => $model,
             ]);
+        }
     }
 
     /**

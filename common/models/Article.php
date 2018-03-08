@@ -38,6 +38,7 @@ class Article extends ActiveRecord
     public function rules()
     {
         return [
+            [['cateId'], 'integer'],
             [['title'], 'required'],
             [['content'], 'string'],
             [['status'], 'integer'],
@@ -64,6 +65,7 @@ class Article extends ActiveRecord
     {
         return [
             'id' => 'ID',
+            'cateId' => '所属分类',
             'title' => '标题',
             'imgUrl' => '缩略图',
             'content' => '正文',
@@ -79,5 +81,10 @@ class Article extends ActiveRecord
         $this->created_at = date('Y-m-d H:i:s', $this->created_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
         $this->updated_at = date('Y-m-d H:i:s', $this->updated_at);//特别注意 HH 是24小时制的,如果是hh会影响到按时间搜索的逻辑。
         return parent::afterFind();
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'cateId']);
     }
 }
